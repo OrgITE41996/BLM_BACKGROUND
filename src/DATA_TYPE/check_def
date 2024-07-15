@@ -1,0 +1,333 @@
+{
+	#define ELECTM
+	#define PROFINET
+	#define RIARMO_NON_EQUIVALENTE
+	#define EMULAZIONE
+	#define MCP_1900
+}
+{
+#ifdef ELECTM  
+}
+  {
+  #ifdef ASSE_Z2
+  }
+    MAXASSI               :INT:=11;
+		activeDevices_Simotion:ARRAY[0..18] OF INT := [0,1,2,3,4,5,6,7,8,9,10,32,33,100,101,102,103,104,122];
+		activedevices_kvc			:ARRAY[0..18] OF INT := [1,2,3,4,5,6,7,8,9,15,16,21,20,23,22,22,22,22,24];
+		label_kvc							:ARRAY[0..18] OF INT := [1,2,3,4,5,6,7,8,9,15,18,69,69,69,20,21,23,24,69];
+		max_kvc_devices				:INT:=19;
+  {
+  #else  //Fine ASSE_Z2
+  }
+    MAXASSI               :INT:=10;
+		activeDevices_Simotion:ARRAY[0..17] OF INT := [0,1,2,3,4,5,6,7,8,9,32,33,100,101,102,103,104,122];
+		activedevices_kvc			:ARRAY[0..17] OF INT := [1,2,3,4,5,6,7,8,9,15,21,20,23,22,22,22,22,24];
+		label_kvc							:ARRAY[0..17] OF INT := [1,2,3,4,5,6,7,8,9,15,69,69,69,20,21,23,24,69];
+		max_kvc_devices				:INT:=18;
+  {
+  #endif  //Fine NO ASSE_Z2
+  }
+
+	MAXASSI_MASTER					:INT:=1;
+	PRIMO_ASSE_MASTER				:INT:=0;	
+	
+  MAXDISPOSITIVI          :INT:=37;
+  PRIMO_ASSE              :INT:=0;
+  PRIMO_DISPOSITIVO       :INT:=32;
+  RAMPA_OVERRIDE          :INT:=1;
+  {
+    #define BLOCCAGGIO_DX
+    #define SPALLAMENTO_DX
+    #define SLITTA_MOBILE_DX
+    #define SICUREZZA_TIRANTE_ANIMA
+    #define PINZA_CARICO_OTTIMIZZATA
+    #define AL_BLM
+    #define AL5_LUNGO
+    #define INTERPOLA_Q1_V1_Z1
+    #define CURVATURA
+    #define IMPOSTA_V1
+    #define CARICO_AUTOMATICO
+		#define KVC
+		#define SNERVAMENTO
+		#define ANIMASOSPESA
+	}
+	{
+	#ifdef PROFINET
+	}
+	  {
+			#define DIAGNOSTICA_PLC_SAFETY
+		}
+	{
+	#endif	//Fine PROFINET
+	}
+	{
+	#ifdef PLC_S7_1500
+	}
+		//Macchina con nuovo PLC
+		VERSIONE_SAFETY            :BYTE:=1;
+		K_CHECKSUM_PLC_SAFETY      :UDINT:=16#A8B373C2;
+	{
+	#else
+	}
+		{
+		#ifdef SELEZIONE_BARRIERA_1_2
+		}
+			//Macchina speciale con la commutazione di due diverse barriere
+			VERSIONE_SAFETY            :BYTE:=;
+			K_CHECKSUM_PLC_SAFETY      :UDINT:=16#;
+		{
+		#else //Fine SELEZIONE_BARRIERA_1_2
+		}
+			//Macchina senza selezione della barriera da utilizzare
+			{
+			#ifdef RIARMO_NON_EQUIVALENTE
+			}
+				//Macchina con riarmo in ingresso doppio canale non equivalente
+				{
+				#ifdef ABILITAZIONE_PULSANTIERA_2MANI
+				}
+					//Macchina con riarmo in ingresso doppio canale non equivalente la pulsantiera a due mani può essere abilitata o meno
+					//in funzione dello stato della variabile ritentiva "PulsantieraDueMani"
+					VERSIONE_SAFETY          :BYTE:=23;
+					K_CHECKSUM_PLC_SAFETY    :UDINT:=16#2B6CA313;
+				{
+				#else  //FINE ABILITAZIONE_PULSANTIERA_2MANI
+				}
+					//Macchina con riarmo in ingresso doppio canale non equivalente la pulsantiera a due mani deve essere sempre presente
+					{
+					#ifdef ASSE_Z2
+					}
+						//Macchina con asse Z2 e riarmo con ingresso in doppio canale non equivalente
+						VERSIONE_SAFETY          :BYTE:=18;
+						K_CHECKSUM_PLC_SAFETY    :UDINT:=16#59131FE7;
+					{
+					#else  //Fine ASSE_Z2
+					}
+						//Macchina con riarmo con ingresso in doppio canale non equivalente
+						VERSIONE_SAFETY          :BYTE:=14;
+						K_CHECKSUM_PLC_SAFETY    :UDINT:=16#7D0BE64D;
+					{
+					#endif  //Fine NO ASSE_Z2
+					}
+				{
+				#endif  //FINE NO ABILITAZIONE_PULSANTIERA_2MANI
+				}
+			{
+			#else  //Fine RIARMO_NON_EQUIVALENTE
+			}
+				//Macchina con riarmo in ingresso doppio canale equivalente
+				VERSIONE_SAFETY          :BYTE:=17;
+				K_CHECKSUM_PLC_SAFETY    :UDINT:=16#8711A629;
+			{
+			#endif  //Fine NO RIARMO_NON_EQUIVALENTE
+			}
+		{
+		#endif //Fine NO SELEZIONE_BARRIERA_1_2
+		}
+	{
+	#endif // FINE NO PLC_S7_1500
+	}
+  ADDRESS_ALIMENTATORE        :INT:=NO_HARDWARE;
+  {
+  #ifdef PLC_S7_1500
+  }
+	ADDRESS_SINAMICS        :INT:=672;
+	ADDRESS_CX1             :INT:=288;
+	TEMPO_ARRESTO_BARRIERA  :REAL:=0.2;	//Tempo di arresto assi durante violazione barriera di sicurezza
+																			//Se è 0=>Si ferma con il tempo dell^asse più lento
+  {
+  #else
+  }
+	  {
+	  #ifdef PROFINET
+	  }
+		ADDRESS_SINAMICS        :INT:=320;
+		ADDRESS_CX1             :INT:=288;
+		TEMPO_ARRESTO_BARRIERA  :REAL:=0.2;	//Tempo di arresto assi durante violazione barriera di sicurezza
+											//Se è 0=>Si ferma con il tempo dell^asse più lento
+		{
+		#define MODULO_ROLAND
+		}
+		{
+	  #else  //Fine PROFINET
+	  }
+		ADDRESS_SINAMICS        :INT:=320;
+		ADDRESS_CX1             :INT:=288;
+		TEMPO_ARRESTO_BARRIERA  :REAL:=0.2;	//Tempo di arresto assi durante violazione barriera di sicurezza
+																				//Se è 0=>Si ferma con il tempo dell^asse più lento
+		{
+			#define RIDUZIONE_OVERRIDE
+		}
+		{
+	  #endif  //Fine NO PROFINET
+	  }
+	{
+	#endif //FINE NO PLC_S7_1500
+	}
+  ADDRESS_CX2               :INT:=NO_HARDWARE;
+  TIPO_MACCHINA             :STRING:='ELECTM';
+  MAXALLARMI_FIFO           :INT:=512;
+  MAX_MODULAZIONI_X1        :SINT:=10;  //Numero di modulazioni angola/coppia curva pinza chiusa
+  MAXTOOLS                  :SINT:=8;   //8 destri + 8 sinistri 
+  ASSI_MAX_TEMPERATURA      :DWORD:=4294967295;  //Assi su cui eseguire il controllo di massima temperatura
+  PORT_RESET_SIMOTION       :INT:=0;  //Numero porta per uscita Reset Simotion
+  BIT_RESET_SIMOTION        :SINT:=1;  //Numero bit per uscita Reset Simotion
+  
+  U4_RIPOSO                 :LREAL:=0;
+  NUMERO_SOSTEGNI           :SINT:=3;
+  ACCELERAZIONE_MASTER      :REAL:=3;
+	
+	
+  //ASSI MACCHINA
+  X1    :INT:=PRIMO_ASSE;    //Carro X
+  Y1    :INT:=PRIMO_ASSE+1;  //Braccio di curvatura Y
+  Z1    :INT:=PRIMO_ASSE+2;  //Rotazione Z
+  Q1    :INT:=PRIMO_ASSE+3;  //Orizzontale testa
+  V1    :INT:=PRIMO_ASSE+4;  //Verticale testa
+  W3    :INT:=PRIMO_ASSE+5;  //Morsa
+  W4    :INT:=PRIMO_ASSE+6;  //Rulli
+  U4    :INT:=PRIMO_ASSE+7;  //Slitta mobile
+  U2    :INT:=PRIMO_ASSE+8;  //Anima
+  L1    :INT:=PRIMO_ASSE+9;  //AL5
+  {
+  #ifdef ASSE_Z2
+  }
+    Z2  :INT:=PRIMO_ASSE+10;//Ricerca saldatura su AL5
+  {
+  #endif  //Fine ASSE_Z2
+  }
+  
+  PINZA                         :INT:=PRIMO_DISPOSITIVO+0;  //32
+  PALETTA                       :INT:=PRIMO_DISPOSITIVO+1;  //33
+  SOSTEGNO_TIRANTE              :INT:=PRIMO_DISPOSITIVO+2;  //34
+  BOOSTER                       :INT:=PRIMO_DISPOSITIVO+3;  //35
+  CILSOTTOTESTA                 :INT:=PRIMO_DISPOSITIVO+4;  //36
+  BLOCCAGGIO_DXSX               :INT:=PRIMO_DISPOSITIVO+5;  //37
+  AL42SPINTORE                  :INT:=PRIMO_DISPOSITIVO+6;  //38
+  AL42FERMOTUBO                 :INT:=PRIMO_DISPOSITIVO+7;  //39
+  AL42SOSTEGNO                  :INT:=PRIMO_DISPOSITIVO+8;  //40
+  AL42PLUSTRASLATORE            :INT:=PRIMO_DISPOSITIVO+9;  //41
+  AL5_SOLLEVATORE_FASCIO        :INT:=PRIMO_DISPOSITIVO+10;  //42
+  PINZA_CARICO                  :INT:=PRIMO_DISPOSITIVO+11;  //43
+  WELD                          :INT:=PRIMO_DISPOSITIVO+12;  //44
+  AL5_SINGOLIZZATORE_DX         :INT:=PRIMO_DISPOSITIVO+13;  //45
+  AL5_SINGOLIZZATORE_SX         :INT:=PRIMO_DISPOSITIVO+14;  //46    
+  AL5_PINZA_DX                  :INT:=PRIMO_DISPOSITIVO+15;  //47
+  AL5_PINZA_SX                  :INT:=PRIMO_DISPOSITIVO+16;  //48
+  AL5_ALLINEATORE               :INT:=PRIMO_DISPOSITIVO+17;  //49
+  AL5_TRASLATORE                :INT:=PRIMO_DISPOSITIVO+18;  //50
+  AL42CADENZATORE               :INT:=PRIMO_DISPOSITIVO+19;  //51
+  AL42PLUSPINZE                 :INT:=PRIMO_DISPOSITIVO+20;  //52
+  AL5_SUPPORTO_DX_ROLAND        :INT:=PRIMO_DISPOSITIVO+21;  //53
+  AL5_SUPPORTO_SX_ROLAND        :INT:=PRIMO_DISPOSITIVO+22;  //54
+  AL5_PALETTA_ROLAND            :INT:=PRIMO_DISPOSITIVO+23;  //55
+  AL5_RULLI_ROLAND              :INT:=PRIMO_DISPOSITIVO+24;  //56
+  AL5_SLITTA_ROLAND             :INT:=PRIMO_DISPOSITIVO+25;  //57
+  AL5_SINGOLIZZATORE_3          :INT:=PRIMO_DISPOSITIVO+26;  //58
+  AL5_SINGOLIZZATORE_4          :INT:=PRIMO_DISPOSITIVO+27;  //59
+  AL5_PINZA_3                   :INT:=PRIMO_DISPOSITIVO+28;  //60
+  AL5_PINZA_4                   :INT:=PRIMO_DISPOSITIVO+29;  //61
+  TAGLIO_LAMA                   :INT:=PRIMO_DISPOSITIVO+30;  //62
+  VERTICALE_1_REGGI_TUBO        :INT:=PRIMO_DISPOSITIVO+31;  //63
+  VERTICALE_2_REGGI_TUBO        :INT:=PRIMO_DISPOSITIVO+32;  //64
+  PINZA_REGGI_TUBO              :INT:=PRIMO_DISPOSITIVO+33;  //65
+  RISCALDAMENTO                 :INT:=PRIMO_DISPOSITIVO+34;  //66
+  CARICO_EUROTUBI               :INT:=PRIMO_DISPOSITIVO+35;  //67
+	ANIMA_SOSPESA									:INT:=PRIMO_DISPOSITIVO+36;  //68
+  
+  TOLLERANZA_SINCRONIZZAZIONE : ARRAY[PRIMO_ASSE..MAXASSI-1] OF INT:=[100,
+                                                                      5,
+                                                                      5,
+                                                                      20,
+                                                                      5,
+                                                                      20,
+                                                                      20,
+                                                                      5,
+                                                                      5,
+                                                                      5];
+
+  MAX_TASTI_ASSI      :USINT:=15;
+  //Rappresenta la mappatura degli assi sulla pulsantiera macchina
+  KEY_ASSI : ARRAY[0..MAX_TASTI_ASSI-1] OF INT:=[X1,
+                                                 Y1,
+                                                 Z1,
+                                                 Q1,
+                                                 V1,
+                                                 W3,
+                                                 W4,
+                                                 U4,
+                                                 U2,
+                                                 {
+                                                 #ifdef ASSE_Z2
+                                                 }
+                                                   Z2,
+                                                 {
+                                                 #else  //Fine ASSE_Z2
+                                                 }
+                                                   -1,
+                                                 {
+                                                 #endif  //Fine ASSE_Z2
+                                                 }
+                                                 -1,
+                                                 -1,
+                                                 -1,
+                                                 -1,
+                                                 L1];
+
+  //COLONNE TABELLA PUNTI
+  MAXCOL_STATI  :INT:=25;  //30;
+  MAXCOL_DEVICE  :INT:=MAXASSI+MAXDISPOSITIVI;  //Rappresenta il numero di colonne nella tabella stati in cui
+                                              //ci sono assi e dispositivi
+  //Rappresenta la numerazione degli assi/dispositivi per VGP
+  COL_DEVICE_STATI : ARRAY[0..MAXCOL_DEVICE-1] OF INT:=[X1,
+                                                        Y1,
+                                                        Z1,
+                                                        Q1,
+                                                        V1,
+                                                        W3,
+                                                        W4,
+                                                        U4,
+                                                        U2,
+                                                        PINZA,
+                                                        PALETTA,
+                                                        SOSTEGNO_TIRANTE,
+                                                        L1,
+                                                        -1,
+                                                        -1,
+                                                        -1,
+                                                        -1,
+                                                        -1,
+                                                        -1,
+                                                        -1,
+                                                        -1];
+                                                      
+  COL_PRIMO_ASSE_TESTA_DX    :SINT:=0;
+  COL_PRIMOASSE              :INT:=1;
+  COL_TIME_MS                :INT:=0;
+  COL_ASSE_X1               :SINT:=1;
+  COL_ASSE_Y1               :SINT:=2;
+  COL_ASSE_Z1               :SINT:=3;
+  COL_ASSE_Q1               :SINT:=4;
+  COL_ASSE_V1               :SINT:=5;
+  COL_ASSE_W3               :SINT:=6;
+  COL_ASSE_W4               :SINT:=7;
+  COL_ASSE_U4               :SINT:=8;
+  COL_ASSE_U2               :SINT:=9;
+  COL_PINZA                 :SINT:=10;
+  COL_PALETTA               :SINT:=11;
+  COL_SOSTEGNO              :SINT:=12;
+  COL_PINZA_CARICO          :SINT:=13;
+  COL_STOP_POINT            :INT:=14;
+  COL_INTERPOLATION_MODE    :INT:=15;
+  COL_NUM_TOOL              :INT:=16;
+  COL_CYCLE                 :INT:=17;
+  COL_RESERVED1             :INT:=18;
+  COL_RESERVED2             :INT:=19;
+  COL_NUM_SEQ               :INT:=20;
+  COL_LIMITE_MINIMO_X       :INT:=21;
+  COL_AUX1                  :SINT:=22;
+  COL_AUX2                  :SINT:=23;
+  COL_AUX3                  :SINT:=24;
+{
+#endif  //Fine ELECTM
+}

@@ -1,0 +1,8 @@
+## The desired name of the trace job.
+name: "example"
+jobType: perpetual
+signals:
+  - 'TEST_S'
+frequency: 1
+checkPoint:
+ task: "MyConfiguration.MainCyclicProgram"

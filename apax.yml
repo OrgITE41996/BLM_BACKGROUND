@@ -1,0 +1,63 @@
+name: "scout_to_ax"
+version: 0.0.0
+type: app
+targets:
+  - "1500"
+  - "plcsim"
+  #- llvm
+variables:
+  DEFINED_PREPROCESSOR_SYMBOLS:
+    - PROFINET
+    - MCP_1900
+    - BLOCCAGGIO_DX
+    - PROFINET
+    - SPALLAMENTO_DX
+    - SLITTA_MOBILE_DX
+    - AL_BLM
+    - EMULAZIONE
+    - INTERPOLA_Q1_V1_Z1
+    - TAVOLI_ELETTRICI
+    - ASSE_Z2
+    - PLC_S7_1500
+    # - DH4010
+    # - BASCULANTE_ELETTRICO
+  APAX_BUILD_ARGS:
+    - "--debug" # Generate debug information for target "1500"
+scripts:
+  #load: sld load --non-overwriting --mode:delta -t 192.168.0.1 -i ./bin/1500/ --accept-security-disclaimer
+  load: sld load --non-overwriting --mode:delta -t 192.168.0.1 -i ./bin/plcsim/ --restart --accept-security-disclaimer
+  #finderror: diag find-error-location -d "Temporary CPU error: Technology function: internal error at FC 44 affecting execution of OB 123 accessing Volatile DB area Incorrect address, operand ignored   PLC_1 / PLC_1" -s ./bin/1500/scout_to_ax.app
+  #diag find-error-location -d "Temporary CPU error: Technology function: internal error at FC 44 affecting execution of OB 123 accessing Volatile DB area Incorrect address, operand ignored   PLC_1 / PLC_1" -s ./bin/plcsim/consume-kd ignored   PLC_1 / PLC_1" -s .bin\1500\scout_to_ax.app
+  #Put the PLC in STOP, install a loadable onto it and then put the PLC in RUN
+  BuildStopLoadAndRun: apax build && plc-info set-mode stop -t 192.168.0.1 --yes && sld load --non-overwriting --mode:delta -t 192.168.0.1 -i ./bin/1500 --restart --accept-security-disclaimer && plc-info set-mode run -t 192.168.0.1 --yes
+  #PLCSim
+  PLCSimBuildStopLoadAndRun: apax build && plc-info set-mode stop -t 192.168.0.1 --yes && sld load --non-overwriting --mode:delta -t 192.168.0.1 -i ./bin/plcsim --restart --accept-security-disclaimer && plc-info set-mode run -t 192.168.0.1 --yes
+
+
+apaxVersion: 3.1.1
+#registries:
+# '@simatic-ax': 'https://npm.pkg.github.com/'
+devDependencies:
+  #"@ax/stc": 7.0.52
+  #"@ax/target-mc7plus": 7.0.52
+  #"@ax/target-llvm": 7.0.52
+  #"@ax/mon": 1.2.2
+  #"@ax/diagnostic-buffer": 1.3.1
+  #"@ax/mod": 1.2.2
+  "@ax/sdk": 2405.0.0
+dependencies:
+  "@ax/simatic-1500-motioncontrol-native-v8": 6.0.11
+  "@ax/simatic-1500-motioncontrol-v8": 6.0.11
+  "@ax/simatic-1500-tasks": 6.0.8
+  "@ax/system-bitaccess": 7.0.17
+  "@ax/simatic-1500-clocks": 7.0.4
+  "@ax/system-math": 7.0.17
+  "@ax/plc-mode": ^1.0.0
+  "@ax/diag": 1.0.4
+  "@simatic-ax/lacyccom": ^1.0.0
+  #"@ax/sdk": 2405.0.0
+  "@ax/apax": ^3.2.0
+  "@ax/system": 7.0.17
+
+#catalogs:
+# "@ax/simatic-ax": ^2405.0.0

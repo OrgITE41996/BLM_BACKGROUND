@@ -1,0 +1,21 @@
+            mcpi_10000 
+            mcpi_1000 
+            mcpi_100 
+            mcpi_10 
+            mcpi_1 
+            mcpi_singleblock 
+            mcpi_repos 
+            mcpi_NCstart 
+            mcpi_ncstop 
+            mcpi_reset 
+            mcpi_AUTO 
+            mcpi_JOG 
+            mcpi_REF 
+            mcpi_MDA 
+            mcpi_VARINC 
+            Axes[0].ma_asse_installato_shadow
+pm[0].ma_asse_abilitato
+i_sys_PnCoupler
+i_sys_DpCoupler
+mcpo_ncstop
+SystemStarted
